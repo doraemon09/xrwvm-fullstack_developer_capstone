@@ -15,7 +15,8 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from .populate import initiate
 from .models import CarMake, CarModel
-from .restapis import get_request, analyze_review_sentiments, post_review
+from .restapis import get_request, analyze_review_sentiments
+# from .restapis import post_review
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -66,7 +67,7 @@ def registration(request):
         username_exist = True
     except Except as this_error:
         # If not, simply log this is a new user
-        logger.debug("{} is new user".format(username))
+        logger.debug("{} is new user: {}".format(username, this_error))
 
     # If it is a new user
     if not username_exist:
@@ -108,7 +109,7 @@ def get_cars(request):
 # # Update the `get_dealerships` view to render the index page with
 # a list of dealerships
 # def get_dealerships(request):
-# Update the `get_dealerships` render list of dealerships all by default, 
+# Update the `get_dealerships` render list of dealerships all by default,
 # particular state if state is passed
 def get_dealerships(request, state="All"):
     if (state == "All"):
@@ -150,7 +151,7 @@ def get_dealer_details(request, dealer_id):
 # def add_review(request):
 def add_review(request):
     if (request.user.is_anonymous is False):
-        data = json.loads(request.body)
+        # data = json.loads(request.body)
         try:
             # response = post_review(data)
             return JsonResponse({"status": 200})
@@ -158,7 +159,7 @@ def add_review(request):
             return JsonResponse(
                 {
                     "status": 401,
-                    "message": "Error in posting review",
+                    "message": f"Error in posting review: {this_error}",
                 }
             )
     else:
